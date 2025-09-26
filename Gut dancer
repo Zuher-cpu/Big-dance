@@ -13,7 +13,7 @@ if not isfile("Disbelief_Hub/CoreAnimations.rbxmx")  then
 writefile("Disbelief_Hub/CoreAnimations.rbxmx", game:HttpGet("https://raw.githubusercontent.com/MelonsStuff/DisbeliefHub/main/Scripts/Animations/Animations.rbxmx"))
 end
 
-local Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zuher-cpu/Big-Rig/refs/heads/main/Big"))()
+local Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zuher-cpu/Gut-rig/refs/heads/main/Gut"))()
 local Player = game:GetService("Players").LocalPlayer
 local Name = game.Players.LocalPlayer.Name
 local Character = workspace.non
