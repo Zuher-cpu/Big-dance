@@ -1,0 +1,145 @@
+-- disbelief hub is FUCKING DEAD!!!!!!!!!!! --
+getgenv().Settings = {Highlight = false, HighlightColor = Color3.fromRGB(0, 255, 0), MouseFollowsHead = false}
+
+if game.CoreGui:FindFirstChild("FluxLib") then
+game.CoreGui:FindFirstChild("FluxLib"):Destroy()
+end
+
+if not isfolder("Disbelief_Hub") then
+makefolder("Disbelief_Hub")
+end
+
+if not isfile("Disbelief_Hub/CoreAnimations.rbxmx")  then
+writefile("Disbelief_Hub/CoreAnimations.rbxmx", game:HttpGet("https://raw.githubusercontent.com/MelonsStuff/DisbeliefHub/main/Scripts/Animations/Animations.rbxmx"))
+end
+
+local Reanimate = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zuher-cpu/Big-Rig/refs/heads/main/Big"))()
+local Player = game:GetService("Players").LocalPlayer
+local Name = game.Players.LocalPlayer.Name
+local Character = workspace.non
+local Head = Character.Head
+local Torso = Character.Torso
+local Neck = Torso.Neck
+local NeckC0 = Neck.C0
+local RootPart = Character.HumanoidRootPart
+local Humanoid = Character.Humanoid
+local Mouse = Player:GetMouse()
+local Jumped,Falled,Idled,Walked = false,false,false,false
+local AnimatorModule
+local Quotes = {"Irony at its finest.", "Because not all things have legacies.", "This time, we actually tested it.", "You can actually read this one!"}
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/fluxlib.txt"))()
+local GUI = Lib:Window("Disbelief Hub", Quotes[math.random(1, #Quotes)], Color3.fromRGB(0, 0, 0), Enum.KeyCode.LeftControl)
+local DancesA = GUI:Tab("Animations - R6 Dances", "http://www.roblox.com/asset/?id=6023426915")
+local R6Dances = game:GetObjects("rbxassetid://114448427613380")[1]
+local CoreAnimations = game:GetObjects(getcustomasset("Disbelief_Hub/CoreAnimations.rbxmx"))[1]
+task.wait(1)
+if getgenv().Settings.MouseFollowsHead == true then
+AnimatorModule = loadstring(game:HttpGet("https://gist.githubusercontent.com/MelonsStuff/07fa41cf60cc9e2f0214c6057f71e3c4/raw/e54e21bb90ffa31099e9f797253fa159b358ab8c/NecklessAnimator"))()
+else
+AnimatorModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/MelonsStuff/DisbeliefHub/refs/heads/main/Scripts/AnimatorModule.lua"))()
+end
+
+if getgenv().Settings.Highlight == true then
+local Highlight = Instance.new("Highlight", Character)
+Highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+Highlight.FillTransparency = 1
+Highlight.OutlineColor = getgenv().Settings.HighlightColor
+end
+
+function LoadAnim(Rig, KeyFrameS)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+AnimatorModule[Rig][KeyFrameS.Name] = AnimatorModule:LoadAnimation(Rig, KeyFrameS)
+end
+
+function PlayAnim(Rig, Animation, AnimFade, AnimSpeed)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+if not AnimatorModule[Rig][Animation.Name] then
+AnimatorModule[Rig][Animation.Name] = AnimatorModule:LoadAnimation(Rig, Animation)
+end
+for Animation, Track in next, AnimatorModule[Rig] do
+if Animation ~= Animation.Name then
+Track:Stop()
+end
+end
+if not AnimatorModule[Rig][Animation.Name].IsPlaying then
+AnimatorModule[Rig][Animation.Name]:Play(AnimFade or 1, AnimSpeed or 1)
+end
+end
+
+function StopAnim(Rig, Anim)
+if not AnimatorModule[Rig] then
+AnimatorModule[Rig] = {}
+end
+if not AnimatorModule[Rig][Anim.Name] then
+AnimatorModule[Rig][Anim.Name] = AnimatorModule:LoadAnimation(Rig, Anim)
+end
+AnimatorModule[Rig][Anim.Name]:Stop()
+end
+
+for i, v in ipairs(R6Dances:GetChildren()) do
+DancesA:Button(v.Name, v.Name, function()
+PlayAnim(Character, v, 0, 1.05)
+end)
+end
+
+game:GetService("RunService").Heartbeat:Connect(function(dt)
+for i,v in pairs(Character:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()) do
+v:Stop(0)
+end
+local HitFloor, HitPosition = workspace:FindPartOnRay(Ray.new(RootPart.Position, (CFrame.new(RootPart.Position, RootPart.Position + Vector3.new(0, -1, 0))).LookVector * 4), Character)
+TorsoVelocity = (RootPart.Velocity).Magnitude
+TorsoVerticalVelocity = RootPart.Velocity.Y
+if TorsoVerticalVelocity > 1 and HitFloor == nil then
+if Jumped == false then
+Jumped = true
+PlayAnim(Character, CoreAnimations.Jump, 0.1, 1)
+end
+Falled = false
+Idled = false
+Walked = false
+StopAnim(Character, CoreAnimations.Fall)
+StopAnim(Character, CoreAnimations.Idle)
+StopAnim(Character, CoreAnimations.Walk)
+elseif TorsoVerticalVelocity < 1 and HitFloor == nil then
+if Falled == false then
+Falled = true
+PlayAnim(Character, CoreAnimations.Fall, 0.1, 1)
+end		
+Jumped = false
+Idled = false
+Walked = false
+StopAnim(Character, CoreAnimations.Jump)
+StopAnim(Character, CoreAnimations.Idle)
+StopAnim(Character, CoreAnimations.Walk)
+elseif TorsoVelocity < 1 and HitFloor ~= nil then
+if Idled == false then
+Idled = true
+PlayAnim(Character, CoreAnimations.Idle, 0.1, 0.1)
+end
+Jumped = false
+Falled = false
+Walked = false
+StopAnim(Character, CoreAnimations.Jump)
+StopAnim(Character, CoreAnimations.Fall)
+StopAnim(Character, CoreAnimations.Walk)
+elseif TorsoVelocity > 1 and HitFloor ~= nil then
+if Walked == false then
+Walked = true
+PlayAnim(Character, CoreAnimations.Walk,0.1,1)
+end
+Jumped = false
+Falled = false
+Idled = false
+StopAnim(Character, CoreAnimations.Jump)
+StopAnim(Character, CoreAnimations.Fall)
+StopAnim(Character, CoreAnimations.Idle)
+end
+if getgenv().Settings.MouseFollowsHead == true then
+Humanoid.CameraOffset = Humanoid.CameraOffset:Lerp((RootPart.CFrame * CFrame.new(0, 1.5, 0)):PointToObjectSpace(Head.Position),  math.clamp(8 * 60 * 60, 0, 1))
+Neck.C0 = Neck.C0:Lerp(NeckC0 * CFrame.Angles(math.atan((Head.Position - Mouse.Hit.Position).Unit.Y), 0,  (Head.Position - Mouse.Hit.Position).Unit:Cross(Torso.CFrame.LookVector).Y), math.clamp(8 * dt, 0, 1))
+end
+end)
